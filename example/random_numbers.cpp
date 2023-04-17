@@ -1,6 +1,6 @@
+#include <cassert>
 #include <iostream>
 #include <random>
-#include <cassert>
 
 struct PRNG {
     std::mt19937 engine;
@@ -18,7 +18,7 @@ int random(PRNG &generator, int min_value, int max_value) {
 }
 
 double get_random_double(PRNG &generator, int min_value, int max_value) {
-    assert(min_value < max_value);    
+    assert(min_value < max_value);
     std::uniform_real_distribution<double> distribution(min_value, max_value);
     return distribution(generator.engine);
 }

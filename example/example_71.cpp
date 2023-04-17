@@ -1,6 +1,6 @@
 #include <iostream>
-#include <thread>
 #include <mutex>
+#include <thread>
 
 std::mutex mtx;
 
@@ -19,7 +19,7 @@ void print_1(char ch) {
 
 void print_2(char ch) {
     // Вариант с синхронизацией
-    mtx.lock(); // Начало блока
+    mtx.lock();  // Начало блока
     for (size_t i = 0; i < 5; ++i) {
         for (size_t j = 0; j < 10; j++) {
             std::cout << ch;
@@ -28,23 +28,26 @@ void print_2(char ch) {
         std::cout << "\n";
     }
     std::cout << "\n";
-    mtx.unlock(); // Конец блока
-    std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Выполняется параллельно с каждым потоком
+    mtx.unlock();  // Конец блока
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds(100));  // Выполняется параллельно с каждым потоком
 }
 
-void print_3(char ch) {{
-    // Другой вариант с синхронизацией
-    std::lock_guard<std::mutex> guard(mtx);
-    for (size_t i = 0; i < 5; ++i) {
-        for (size_t j = 0; j < 10; ++j) {
-            std::cout << ch;
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+void print_3(char ch) {
+    {
+        // Другой вариант с синхронизацией
+        std::lock_guard<std::mutex> guard(mtx);
+        for (size_t i = 0; i < 5; ++i) {
+            for (size_t j = 0; j < 10; ++j) {
+                std::cout << ch;
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            }
+            std::cout << "\n";
         }
         std::cout << "\n";
     }
-    std::cout << "\n";
-    }
-    std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Выполняется параллельно с каждым потоком
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds(100));  // Выполняется параллельно с каждым потоком
 }
 
 int main() {
@@ -64,5 +67,5 @@ int main() {
     std::thread th5(print_3, '$');
     std::thread th6(print_3, '%');
     th5.join();
-    th6.join();    
+    th6.join();
 }
