@@ -36,7 +36,8 @@ void print_2(char ch) {
 void print_3(char ch) {
     {
         // Другой вариант с синхронизацией
-        std::lock_guard<std::mutex> guard(mtx);
+        // std::lock_guard<std::mutex> guard(mtx);
+        std::unique_lock<std::mutex> guard(mtx);
         for (size_t i = 0; i < 5; ++i) {
             for (size_t j = 0; j < 10; ++j) {
                 std::cout << ch;
