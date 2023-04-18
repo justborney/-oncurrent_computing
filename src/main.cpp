@@ -66,15 +66,15 @@ int min_value(std::vector<int> &vect) {
 //-------------------- thread function --------------------
 void thread_exec(std::vector<std::vector<int>> &matrix, int range_min, int range_max,
                  int &result) {
-		size_t size = matrix[range_min].size();
+    size_t size = matrix[range_min].size();
 
-		for (size_t i = range_min; i < range_max; ++i) {
-			std::vector<int> column(size);
-			for (size_t j = 0; j < size; ++j) {
-				column[j] = matrix[j][i];
-			}
-			result += min_value(column);
-		}
+    for (size_t i = range_min; i < range_max; ++i) {
+        std::vector<int> column(size);
+        for (size_t j = 0; j < size; ++j) {
+            column[j] = matrix[j][i];
+        }
+        result += min_value(column);
+    }
 }
 
 //-------------------- main --------------------
