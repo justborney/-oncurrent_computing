@@ -1,3 +1,5 @@
+#include <chrono>
+#include <iomanip>
 #include <iostream>
 #include <random>
 #include <thread>
@@ -78,7 +80,7 @@ void thread_exec(std::vector<std::vector<int>> &matrix, int range_min, int range
 }
 
 //-------------------- main --------------------
-int main() {
+void start() {
     PRNG generator;
     init_generator(generator);
 
@@ -113,4 +115,20 @@ int main() {
     std::cout << "Matrix:\n";
     print_matrix(matrix);
     std::cout << "Sum of minimal values: " << result << '\n';
+}
+
+using namespace std;
+using seconds = chrono::duration<double>;
+using milliseconds = chrono::duration<double, ratio_multiply<seconds::period, milli>>;
+using microseconds = chrono::duration<double, ratio_multiply<seconds::period, micro>>;
+
+int main() {
+    const auto time_start = chrono::steady_clock::now();
+    start();
+    const auto time_finish = chrono::steady_clock::now();
+    const auto diff = time_finish - time_start;
+
+    std::cout << fixed << setprecision(2) << setw(12) << diff.count() << " sec,\n"
+              << setw(12) << milliseconds(diff).count() << " ms,\n"
+              << setw(12) << microseconds(diff).count() << " micros,\n";
 }
