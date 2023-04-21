@@ -5,7 +5,7 @@
 #include <thread>
 #include <vector>
 
-#define MTRX_DIMENSIONS 5500
+#define MTRX_DIMENSIONS 1500
 #define PRNG_MIN 1
 #define PRNG_MAX 9
 
