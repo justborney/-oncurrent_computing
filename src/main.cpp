@@ -5,8 +5,8 @@
 #include <thread>
 #include <vector>
 
-#define MTRX_DIMENSIONS 8
-#define PRNG_MIN 0
+#define MTRX_DIMENSIONS 5500
+#define PRNG_MIN 1
 #define PRNG_MAX 9
 
 //-------------------- random --------------------
@@ -28,20 +28,20 @@ int random(PRNG &generator, int min_val, int max_val) {
 std::vector<std::vector<int>> init_matrix(PRNG &generator, int size) {
     std::vector<std::vector<int>> matrix(size);
 
-    for (size_t y = 0; y < size; ++y) {
+    for (size_t j = 0; j < size; ++j) {
         std::vector<int> temp(size);
 
-        for (size_t x = 0; x < size; ++x) {
-            temp[x] = random(generator, PRNG_MIN, PRNG_MAX);
+        for (size_t i = 0; i < size; ++i) {
+            temp[i] = random(generator, PRNG_MIN, PRNG_MAX);
         }
-        matrix[y] = temp;
+        matrix[j] = temp;
     }
 
     return matrix;
 }
 
 void print_vector(std::vector<int> &vec) {
-    size_t i;
+    size_t i = 0;
     for (i = 0; i < vec.size() - 1; ++i) {
         std::cout << vec[i] << ' ';
     }
@@ -80,13 +80,13 @@ void thread_exec(std::vector<std::vector<int>> &matrix, int range_min, int range
 }
 
 //-------------------- main --------------------
-void start() {
+void start(int thread_count) {
     PRNG generator;
     init_generator(generator);
 
     std::vector<std::vector<int>> matrix = init_matrix(generator, MTRX_DIMENSIONS);
 
-    int thread_count = 4;
+//    int thread_count = 4;
     int vec_per_thread = MTRX_DIMENSIONS / thread_count;
     int vec_ind_start = 0;
     int vec_ind_end = vec_ind_start + vec_per_thread;
@@ -112,8 +112,8 @@ void start() {
         result += min_vals[i];
     }
 
-    std::cout << "Matrix:\n";
-    print_matrix(matrix);
+    //std::cout << "Matrix:\n";
+    //print_matrix(matrix);
     std::cout << "Sum of minimal values: " << result << '\n';
 }
 
@@ -123,12 +123,17 @@ using milliseconds = chrono::duration<double, ratio_multiply<seconds::period, mi
 using microseconds = chrono::duration<double, ratio_multiply<seconds::period, micro>>;
 
 int main() {
-    const auto time_start = chrono::steady_clock::now();
-    start();
-    const auto time_finish = chrono::steady_clock::now();
-    const auto diff = time_finish - time_start;
+    int threads_count[] = {1, 4, 8, 16};
+    for (size_t i = 0; i < 4; ++i) {
+        cout << "Number of threads: " << threads_count[i] << '\n';
 
-    std::cout << fixed << setprecision(2) << setw(12) << diff.count() << " sec,\n"
+        const auto time_start = chrono::steady_clock::now();
+        start(threads_count[i]);
+        const auto time_finish = chrono::steady_clock::now();
+        const auto diff = time_finish - time_start;
+
+        std::cout << fixed << setprecision(3) << setw(12) << seconds(diff).count() << " sec,\n"
               << setw(12) << milliseconds(diff).count() << " ms,\n"
               << setw(12) << microseconds(diff).count() << " micros,\n";
+    }
 }
