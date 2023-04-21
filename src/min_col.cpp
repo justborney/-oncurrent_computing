@@ -46,24 +46,22 @@ int (*(matrix_generate)(PRNG &generator))[M_D] {
 void thread_exec() {
     PRNG generator;
     init_generator(generator);
-    int (*mtrx)[M_D];
+    int(*mtrx)[M_D];
     mtrx = matrix_generate(generator);
-    
+
     int threads_count[] = {1, 4, 8, 16};
     int min_vals[M_D];
 
     for (size_t i = 0; i < 4; ++i) {
         int vec_per_thread = M_D / threads_count[i];
         int vec_ind_start = 0;
-            int vec_ind_end = vec_ind_start + vec_per_thread;
+        int vec_ind_end = vec_ind_start + vec_per_thread;
 
         for (size_t j = 0; j < threads_count[i]; ++j) {
-            std::thread temp(std::thread(thread_exec, mtrx, vec_ind_start, vec_ind_end, min_vals[j]));
+            std::thread temp(std::thread(thread_exec, mtrx, vec_ind_start, vec_ind_end,
+                                         min_vals[j]));
         }
     }
 }
 
-int main() {
-
-    return 0;
-}
+int main() { return 0; }

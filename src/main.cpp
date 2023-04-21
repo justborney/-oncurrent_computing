@@ -86,7 +86,7 @@ void start(int thread_count) {
 
     std::vector<std::vector<int>> matrix = init_matrix(generator, MTRX_DIMENSIONS);
 
-//    int thread_count = 4;
+    //    int thread_count = 4;
     int vec_per_thread = MTRX_DIMENSIONS / thread_count;
     int vec_ind_start = 0;
     int vec_ind_end = vec_ind_start + vec_per_thread;
@@ -112,8 +112,8 @@ void start(int thread_count) {
         result += min_vals[i];
     }
 
-    //std::cout << "Matrix:\n";
-    //print_matrix(matrix);
+    // std::cout << "Matrix:\n";
+    // print_matrix(matrix);
     std::cout << "Sum of minimal values: " << result << '\n';
 }
 
@@ -132,8 +132,9 @@ int main() {
         const auto time_finish = chrono::steady_clock::now();
         const auto diff = time_finish - time_start;
 
-        std::cout << fixed << setprecision(3) << setw(12) << seconds(diff).count() << " sec,\n"
-              << setw(12) << milliseconds(diff).count() << " ms,\n"
-              << setw(12) << microseconds(diff).count() << " micros,\n";
+        std::cout << fixed << setprecision(3) << setw(12) << seconds(diff).count()
+                  << " sec,\n"
+                  << setw(12) << milliseconds(diff).count() << " ms,\n"
+                  << setw(12) << microseconds(diff).count() << " micros,\n";
     }
 }
