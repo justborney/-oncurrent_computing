@@ -5,7 +5,7 @@
 #define THREAD_N 4
 size_t thread_n_arr[THREAD_N] = {1, 4, 8, 16};
 
-int str_isdigit(char *str);
+bool str_isdigit(char *str);
 
 void start(char **threads, size_t n);
 void start(size_t threads[THREAD_N]);
@@ -20,14 +20,14 @@ int main(int argc, char *argv[]) {
 }
 
 // ------------------------------ definitions
-int str_isdigit(char *str) {
+bool str_isdigit(char *str) {
 	while (*str) {
 		if (!(*str >= '0' && *str <= '9')) {
-			return 0;
+			return false;
 		}
 		++str;
 	}
-	return 1;
+	return true;
 }
 
 void start(char **threads, size_t n) {
