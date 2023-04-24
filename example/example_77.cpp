@@ -19,7 +19,7 @@ static std::string sorted(std::string s) {
 }
 
 static bool is_vowel(char c) {
-    std::string vowels = "аяуюеёэиы";
+    std::string vowels = "aeiou";
 
     return vowels.end() != std::find(vowels.begin(), vowels.end(), c);
 }
