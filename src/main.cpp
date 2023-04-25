@@ -5,9 +5,14 @@
 #include <thread>
 #include <vector>
 
-#define MTRX_DIMENSIONS 1500
+#define MTRX_DIMENSIONS 2500
 #define PRNG_MIN 1
 #define PRNG_MAX 9
+
+using namespace std;
+using seconds = chrono::duration<double>;
+using milliseconds = chrono::duration<double, ratio_multiply<seconds::period, milli>>;
+using microseconds = chrono::duration<double, ratio_multiply<seconds::period, micro>>;
 
 //-------------------- random --------------------
 typedef struct {
@@ -80,55 +85,55 @@ void thread_exec(std::vector<std::vector<int>> &matrix, int range_min, int range
 }
 
 //-------------------- main --------------------
-void start(int thread_count) {
+void start() {
     PRNG generator;
     init_generator(generator);
 
     std::vector<std::vector<int>> matrix = init_matrix(generator, MTRX_DIMENSIONS);
 
     //    int thread_count = 4;
-    int vec_per_thread = MTRX_DIMENSIONS / thread_count;
-    int vec_ind_start = 0;
-    int vec_ind_end = vec_ind_start + vec_per_thread;
 
-    std::vector<std::thread> threads;
-    std::vector<int> min_vals(thread_count);
-
-    for (size_t i = 0; i < thread_count; ++i) {
-        std::thread temp(std::thread(thread_exec, std::ref(matrix), vec_ind_start,
-                                     vec_ind_end, std::ref(min_vals.at(i))));
-        threads.push_back(move(temp));
-
-        vec_ind_end += vec_per_thread;
-        vec_ind_start += vec_per_thread;
-    }
-
-    for (size_t i = 0; i < threads.size(); ++i) {
-        threads[i].join();
-    }
-
-    int result = 0;
-    for (size_t i = 0; i < min_vals.size(); ++i) {
-        result += min_vals[i];
-    }
-
-    // std::cout << "Matrix:\n";
-    // print_matrix(matrix);
-    std::cout << "Sum of minimal values: " << result << '\n';
-}
-
-using namespace std;
-using seconds = chrono::duration<double>;
-using milliseconds = chrono::duration<double, ratio_multiply<seconds::period, milli>>;
-using microseconds = chrono::duration<double, ratio_multiply<seconds::period, micro>>;
-
-int main() {
+        
     int threads_count[] = {1, 4, 8, 16};
     for (size_t i = 0; i < 4; ++i) {
         cout << "Number of threads: " << threads_count[i] << '\n';
+        int thread_count = threads_count[i];
 
         const auto time_start = chrono::steady_clock::now();
-        start(threads_count[i]);
+        int vec_per_thread = MTRX_DIMENSIONS / thread_count;    // For 16 -> 1500/16
+        int vec_ind_start = 0;                                  // For 16 -> 
+        int vec_ind_end = vec_ind_start + vec_per_thread;
+
+        std::vector<std::thread> threads;
+        std::vector<int> min_vals(thread_count);
+
+        for (size_t i = 0; i < thread_count; ++i) {
+            std::thread temp(std::thread(thread_exec, std::ref(matrix), vec_ind_start,
+                                         vec_ind_end, std::ref(min_vals.at(i))));
+            threads.push_back(move(temp));
+
+            if (i != thread_count - 2) {
+                vec_ind_end += vec_per_thread;
+                vec_ind_start += vec_per_thread;
+            } else {
+                vec_ind_start = vec_ind_end;
+                vec_ind_end = MTRX_DIMENSIONS;
+            }
+        }
+
+        for (size_t i = 0; i < threads.size(); ++i) {
+            threads[i].join();
+        }
+
+        int result = 0;
+        for (size_t i = 0; i < min_vals.size(); ++i) {
+            result += min_vals[i];
+        }
+
+        // std::cout << "Matrix:\n";
+        // print_matrix(matrix);
+        std::cout << "Sum of minimal values: " << result << '\n';
+
         const auto time_finish = chrono::steady_clock::now();
         const auto diff = time_finish - time_start;
 
@@ -137,4 +142,8 @@ int main() {
                   << setw(12) << milliseconds(diff).count() << " ms,\n"
                   << setw(12) << microseconds(diff).count() << " micros,\n";
     }
+}
+
+int main() {
+    start();
 }
