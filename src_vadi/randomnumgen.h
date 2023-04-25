@@ -4,6 +4,9 @@
 #include <cassert>
 #include <random>
 
+#define DEFAULT_MIN 0
+#define DEFAULT_MAX 9
+
 class randgen {
    public:
     randgen() {
@@ -11,22 +14,28 @@ class randgen {
         engine.seed(device());
     }
 
+    randgen(int min_v, int max_v) : min(min_v), max(max_v) {
+				assert(min < max);
+        std::random_device device;
+        engine.seed(device());
+    }
+
     ~randgen() {}
 
-    int randint(int min_v, int max_v) {
-        assert(min_v < max_v);
-        std::uniform_int_distribution<int> distribution(min_v, max_v);
+    int randint() {
+        std::uniform_int_distribution<int> distribution(min, max);
         return distribution(engine);
     }
 
-    double randdouble(int min_v, int max_v) {
-        assert(min_v < max_v);
-        std::uniform_real_distribution<double> distribution(min_v, max_v);
+    double randdouble() {
+        std::uniform_real_distribution<double> distribution(min, max);
         return distribution(engine);
     }
 
    private:
     std::mt19937 engine;
+		int min = DEFAULT_MIN;
+		int max = DEFAULT_MAX;
 };
 
 #endif  // RANDOMNUMGEN_H

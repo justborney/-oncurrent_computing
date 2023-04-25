@@ -29,7 +29,7 @@ class matrix {
         }
     }
 
-    ~matrix() {}
+    ~matrix<T>() {}
 
     size_t rows() { return row_n; }
     size_t cols() { return col_n; }
@@ -61,17 +61,5 @@ class matrix {
     size_t row_n;
     size_t col_n;
 };
-
-void col_set_values_int(matrix<int> &mtrx, size_t ind, randgen &gen, int min_v, int max_v) {
-	for (size_t y = 0; y < mtrx.rows(); ++y) {
-		mtrx[y][ind] = gen.randint(min_v, max_v);
-	}
-}
-
-void col_set_values_double(matrix<double> &mtrx, size_t ind, randgen &gen, double min_v, double max_v) {
-	for (size_t y = 0; y < mtrx.rows(); ++y) {
-		mtrx[y][ind] = gen.randdouble(min_v, max_v);
-	}
-}
 
 #endif  // MATRIX_H
