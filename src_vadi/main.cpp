@@ -6,9 +6,7 @@ int main() {
 
 	matrix <int> mtrx(5, 5);
 	for (size_t i = 0; i < 5; ++i) {
-		for (size_t j = 0; j < 5; ++j) {
-			mtrx[i][j] = eng.randint(0, 9);
-		}
+		col_set_values_int(mtrx, i, eng, 0, 9);
 	}
 	mtrx.print();
 	for (size_t i = 0; i < 5; ++i) {
