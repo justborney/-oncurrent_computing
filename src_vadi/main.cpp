@@ -12,7 +12,7 @@ const std::vector <size_t> th_n = {1, 4, 8, 16};
 
 void start_n_threads(size_t n, thread_stat &result);
 
-int main() {
+int main(int argc, char *argv[]) {
 	std::vector <thread_stat> stats(th_n.size());
 
 	for (size_t i = 0; i < th_n.size(); ++i) {
@@ -29,6 +29,10 @@ int main() {
 							<< "\tExecution time in microsecs: " << microseconds(stats[i].exec_time).count() << '\n';
 
 		if (i == 0) { continue; }
+		double speed_boost = stats[0].exec_time.count() / stats[i].exec_time.count();
+		double effectiveness = speed_boost / th_n[i];
+		std::cout << "\tSpeed boost: " << speed_boost << '\n'
+							<< "\tEffectiveness: " << effectiveness << '\n';
 	}
 }
 
