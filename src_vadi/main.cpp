@@ -5,8 +5,8 @@
 #include "randomnumgen.h"
 #include "threadwork.h"
 
-#define ROW_TEST 1500
-#define COL_TEST 1500
+#define ROW_TEST 15000
+#define COL_TEST 15000
 
 const std::vector<size_t> th_n = {1, 4, 8, 16};
 
