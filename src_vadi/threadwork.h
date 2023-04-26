@@ -44,22 +44,17 @@ class thread_work {
     }
 
     void calculate() {  // only the search for summ of columns is timed
-        const auto time_start = std::chrono::steady_clock::now();
         size_t result = mtrx->col_min_value(ind_col_start);
         for (size_t y = ind_col_start + 1; y < ind_col_end; ++y) {
             result += mtrx->col_min_value(y);
         }
 
-        const auto time_finish = std::chrono::steady_clock::now();
-        exec_time = time_finish - time_start;
         min_col_sum = result;
     }
 
-    seconds get_exec_time() { return exec_time; }
     int get_min_col_sum() { return min_col_sum; }
 
    private:
-    seconds exec_time;
     int min_col_sum;
 
     randgen gen;
@@ -71,13 +66,12 @@ class thread_work {
 
 /* As a means of returning calculated values from thread, a reference to 'thread_stat'
  * structure is used */
-void thread_func(matrix<int> &mtrx, size_t from, size_t to, thread_stat &th_s) {
+void thread_func(matrix<int> &mtrx, size_t from, size_t to, int &sum) {
     thread_work th_w(mtrx, from, to);  // matrix slice is defined
     th_w.set_values();                 // random values to this slice is set
     th_w.calculate();                  // summ is calculated
 
-    th_s.exec_time = th_w.get_exec_time();  // basically return values
-    th_s.min_col_sum = th_w.get_min_col_sum();
+    sum = th_w.get_min_col_sum();
 }
 
 #endif  // THREADWORK

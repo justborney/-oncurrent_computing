@@ -13,8 +13,7 @@ const std::vector<size_t> th_n = {1, 4, 8, 16};
 void start_n_threads(size_t n, thread_stat &result);
 
 int main(int argc, char *argv[]) {
-    std::vector<thread_stat> stats(
-        th_n.size());  // vector of statistics for each amount of threads
+    std::vector<thread_stat> stats(th_n.size());
 
     for (size_t i = 0; i < th_n.size(); ++i) {  // start & collect statistics
         start_n_threads(th_n[i], stats[i]);
@@ -32,8 +31,7 @@ int main(int argc, char *argv[]) {
                   << "\tExecution time in microsecs: "
                   << microseconds(stats[i].exec_time).count() << '\n';
 
-        if (i == 0) {  // no need to print effectiveness and boost for one thread, so
-                       // move on to the next iteration
+        if (i == 0) {
             continue;
         }
         double speed_boost = stats[0].exec_time.count() / stats[i].exec_time.count();
@@ -43,24 +41,23 @@ int main(int argc, char *argv[]) {
     }
 }
 
-void start_n_threads(size_t n,
-                     thread_stat &result) {  // starts N threads, sums all exec time and
-                                             // summs to 'result' struct
+void start_n_threads(size_t n, thread_stat &result) {
+
     std::vector<std::thread> threads;
-    std::vector<thread_stat> thread_stats(n);
+    std::vector<int> thread_sums(n);
     matrix<int> mtrx(ROW_TEST, COL_TEST);
 
     size_t col_step = COL_TEST / n;
     size_t col_start = 0;
     size_t col_end = col_step;
 
+		const auto time_start = std::chrono::steady_clock::now();
     for (size_t i = 0; i < n; ++i) {
-        if (i == n - 1) {  // if it is the last iteration, make sure that the last
-                           // thread works on all the remaining columns
+        if (i == n - 1) {
             col_end = COL_TEST;
         }
         std::thread temp_thread(thread_func, std::ref(mtrx), col_start, col_end,
-                                std::ref(thread_stats[i]));
+                                std::ref(thread_sums[i]));
         threads.push_back(move(temp_thread));
 
         col_start += col_step;
@@ -69,11 +66,11 @@ void start_n_threads(size_t n,
     for (size_t i = 0; i < threads.size(); ++i) {
         threads[i].join();
     }
+		const auto time_finish = std::chrono::steady_clock::now();
 
-    result.exec_time = thread_stats[0].exec_time;  // summarize info
-    result.min_col_sum = thread_stats[0].min_col_sum;
-    for (size_t i = 1; i < thread_stats.size(); ++i) {
-        result.exec_time += thread_stats[i].exec_time;
-        result.min_col_sum += thread_stats[i].min_col_sum;
+    result.exec_time = time_finish - time_start;
+    result.min_col_sum = thread_sums[0];
+    for (size_t i = 1; i < thread_sums.size(); ++i) {
+        result.min_col_sum += thread_sums[i];
     }
 }
