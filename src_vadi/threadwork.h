@@ -20,10 +20,11 @@ typedef struct {
 /* Motivation behind this class:
  * 		The more correct way of calling it would have been "matrix slice"
  *			since you pass matrix pointer to it and 2 variables that define
- *a range of this slice Create a thread, pass a function to it In the function create
- *instance of this class Call 'set_values' so matrix is filled with numbers Call
- *'calculate' and summ of all minimal elements of columns from 'ind_col_start' to
- *'ind_col_end' is calculated Look up 'thread_func' for more info
+ *			a range of this slice
+ *		Create a thread, pass a function to it
+ *		In the function create an instance of this class
+ *		Call 'set_values' so matrix is filled with numbers
+ *		Call 'calculate', which does all the work
  */
 
 class thread_work {
