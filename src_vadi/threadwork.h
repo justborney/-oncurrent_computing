@@ -17,6 +17,15 @@ typedef struct {
     int min_col_sum;
 } thread_stat;
 
+/* Motivation behind this class:
+ * 		The more correct way of calling it would have been "matrix slice"
+ *			since you pass matrix pointer to it and 2 variables that define a
+ *range of this slice Create a thread, pass a function to it In the function create
+ *instance of this class Call 'set_values' so matrix is filled with numbers Call
+ *'calculate' and summ of all minimal elements of columns from 'ind_col_start' to
+ *'ind_col_end' is calculated Look up 'thread_func' for more info
+ */
+
 class thread_work {
    public:
     thread_work(matrix<int> &mtrx_v, size_t from_v, size_t to_v)
@@ -27,12 +36,13 @@ class thread_work {
     void set_values() {
         for (size_t y = 0; y < mtrx->rows(); ++y) {
             for (size_t x = ind_col_start; x < ind_col_end; ++x) {
-                (*mtrx)[y][x] = gen.randint();
+                (*mtrx)[y][x] = gen.randint();  // (*mtrx) crap is because C++ (in C it
+                                                // would've worked without it(probably))
             }
         }
     }
 
-    void calculate() {
+    void calculate() {  // only the search for summ of columns is timed
         const auto time_start = std::chrono::steady_clock::now();
         size_t result = mtrx->col_min_value(ind_col_start);
         for (size_t y = ind_col_start + 1; y < ind_col_end; ++y) {
@@ -58,12 +68,14 @@ class thread_work {
     size_t ind_col_end;
 };
 
+/* As a means of returning calculated values from thread, a reference to 'thread_stat'
+ * structure is used */
 void thread_func(matrix<int> &mtrx, size_t from, size_t to, thread_stat &th_s) {
-    thread_work th_w(mtrx, from, to);
-    th_w.set_values();
-    th_w.calculate();
+    thread_work th_w(mtrx, from, to);  // matrix slice is defined
+    th_w.set_values();                 // random values to this slice is set
+    th_w.calculate();                  // summ is calculated
 
-    th_s.exec_time = th_w.get_exec_time();
+    th_s.exec_time = th_w.get_exec_time();  // basically return values
     th_s.min_col_sum = th_w.get_min_col_sum();
 }
 

@@ -7,6 +7,12 @@
 #define DEFAULT_MIN 0
 #define DEFAULT_MAX 1000000
 
+/* Motivation behind a prng class and a separate header for it:
+ *		Hide this code, so there's no need to look at it, while I debug this
+ *matrix shit Ability to pass random number generator as a single variable, get random
+ *integer via class method
+ */
+
 class randgen {
    public:
     randgen() {

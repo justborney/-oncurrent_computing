@@ -14,14 +14,18 @@
 template <typename T>
 class matrix {
    public:
-    matrix<T>() : row_n(ROW_DEFAULT), col_n(COL_DEFAULT) {
+    matrix<T>()
+        : row_n(ROW_DEFAULT),
+          col_n(COL_DEFAULT) {  // basically __init__, version without arguments,
+                                // creates matrix 8x8
         mtrx.resize(row_n);
         for (size_t i = 0; i < row_n; ++i) {
             mtrx[i].resize(col_n);
         }
     }
 
-    matrix<T>(size_t y, size_t x) : row_n(y), col_n(x) {
+    matrix<T>(size_t y, size_t x)
+        : row_n(y), col_n(x) {  // __init__ also, but with rows and columns arguments
         assert(y > 0 && x > 0);
         mtrx.resize(row_n);
         for (size_t i = 0; i < row_n; ++i) {
@@ -29,12 +33,15 @@ class matrix {
         }
     }
 
-    ~matrix<T>() {}
+    ~matrix<T>() {
+    }  // destructor, can be deleted, since no dynamic memory is allocated in this class
 
     size_t rows() { return row_n; }
     size_t cols() { return col_n; }
 
-    std::vector<T>& operator[](size_t ind) { return mtrx[ind]; }
+    std::vector<T>& operator[](size_t ind) {
+        return mtrx[ind];
+    }  // a way to get to a specific row (vector within vector)
 
     T col_min_value(size_t ind) {
         T result = mtrx[0][ind];
