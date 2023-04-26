@@ -5,7 +5,7 @@
 #include <random>
 
 #define DEFAULT_MIN 0
-#define DEFAULT_MAX 9
+#define DEFAULT_MAX 1000000
 
 class randgen {
    public:
