@@ -36,16 +36,16 @@ class matrix {
 
     std::vector<T>& operator[](size_t ind) { return mtrx[ind]; }
 
-		T col_min_value(size_t ind) {
-			T result = mtrx[0][ind];
-			for (size_t i = 1; i < row_n; ++i) {
-				if (result > mtrx[i][ind]) {
-					result = mtrx[i][ind];
-				}
-			}
+    T col_min_value(size_t ind) {
+        T result = mtrx[0][ind];
+        for (size_t i = 1; i < row_n; ++i) {
+            if (result > mtrx[i][ind]) {
+                result = mtrx[i][ind];
+            }
+        }
 
-			return result;
-		}
+        return result;
+    }
 
     void print() {
         for (size_t y = 0; y < row_n; ++y) {

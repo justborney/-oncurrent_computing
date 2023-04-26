@@ -15,7 +15,7 @@ class randgen {
     }
 
     randgen(int min_v, int max_v) : min(min_v), max(max_v) {
-				assert(min < max);
+        assert(min < max);
         std::random_device device;
         engine.seed(device());
     }
@@ -34,8 +34,8 @@ class randgen {
 
    private:
     std::mt19937 engine;
-		int min = DEFAULT_MIN;
-		int max = DEFAULT_MAX;
+    int min = DEFAULT_MIN;
+    int max = DEFAULT_MAX;
 };
 
 #endif  // RANDOMNUMGEN_H
