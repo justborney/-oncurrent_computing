@@ -5,7 +5,7 @@
 #include <thread>
 #include <vector>
 
-#define MTRX_DIMENSIONS 2500
+#define MTRX_DIMENSIONS 15000
 #define PRNG_MIN 1
 #define PRNG_MAX 9
 
@@ -91,9 +91,11 @@ void start() {
 
     std::vector<std::vector<int>> matrix = init_matrix(generator, MTRX_DIMENSIONS);
 
-    //    int thread_count = 4;
+    auto timed1 = chrono::steady_clock::now();
+    auto timed2 = chrono::steady_clock::now();
 
-        
+    auto timed = timed2 - timed1;
+
     int threads_count[] = {1, 4, 8, 16};
     for (size_t i = 0; i < 4; ++i) {
         cout << "Number of threads: " << threads_count[i] << '\n';
@@ -130,17 +132,21 @@ void start() {
             result += min_vals[i];
         }
 
-        // std::cout << "Matrix:\n";
-        // print_matrix(matrix);
         std::cout << "Sum of minimal values: " << result << '\n';
 
         const auto time_finish = chrono::steady_clock::now();
         const auto diff = time_finish - time_start;
 
+        if (i == 0) timed = diff;
+        else {
+            cout << "speed: " << seconds(timed).count() / seconds(diff).count() << '\n';
+            cout << "effectiveness: " << seconds(timed).count() / seconds(diff).count() / threads_count[i] << '\n';
+        }
+
         std::cout << fixed << setprecision(3) << setw(12) << seconds(diff).count()
                   << " sec,\n"
                   << setw(12) << milliseconds(diff).count() << " ms,\n"
-                  << setw(12) << microseconds(diff).count() << " micros,\n";
+                  << setw(12) << microseconds(diff).count() << " micros,\n\n";
     }
 }
 
