@@ -40,5 +40,5 @@ int main() {
         std::cout << c << ": " << count << '\n';
     }
 
-    std::cout << "Sorted string: " << sorted_str.get() << '\n' << "Vowels count: " << vowel_count.get() << '\n';
+    std::cout << "Sorted string: " << sorted_str.get() << '\n' << "Vowels count: " << vowel_count.get();
 }
