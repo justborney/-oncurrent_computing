@@ -215,7 +215,7 @@ int main() {
 
     auto timed = timed2 - timed1;
 
-    int threads_count[] = { 1, 4, 8, 16 };
+    int threads_count[] = { 1, 4, 9, 16 };
     
     for (size_t i = 0; i < 4; ++i) {
         const auto time_start = std::chrono::steady_clock::now();
