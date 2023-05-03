@@ -12,7 +12,7 @@
 using matrix = std::vector<std::vector<double>>;
 using seconds = std::chrono::duration<double>;
 
-matrix RandomMatrix(const int n) {
+matrix random_matrix(const int n) {
     if (n <= 0)
         throw std::invalid_argument("Negative size");
 
@@ -207,8 +207,12 @@ matrix AlgorithmCannonSTD(const matrix &A, const matrix &B, const int &num_threa
 }
 
 int main() {
-    matrix A = RandomMatrix(500);
-    matrix B = RandomMatrix(500);
+    int n = 700;
+
+    std::cin >> n;
+
+    matrix A = random_matrix(n);
+    matrix B = random_matrix(n);
 
     auto timed1 = std::chrono::steady_clock::now();
     auto timed2 = std::chrono::steady_clock::now();
@@ -220,11 +224,13 @@ int main() {
     for (size_t i = 0; i < 4; ++i) {
         const auto time_start = std::chrono::steady_clock::now();
 
-        std::cout << "Number of threads: " << threads_count[i] << '\n';
         matrix C = AlgorithmCannonSTD(A, B, threads_count[i]);
 
+        if (threads_count[i] == 9) threads_count[i] = 8;
+
+        std::cout << "Number of threads: " << threads_count[i] << '\n';
+
         const auto time_finish = std::chrono::steady_clock::now();
-        //const auto diff = std::chrono::duration_cast<std::chrono::duration<double>>(time_finish - time_start);
         const auto diff = time_finish - time_start;
 
         if (i == 0) timed = diff;
@@ -233,6 +239,6 @@ int main() {
             std::cout << "efficiency: " << seconds(timed).count() / seconds(diff).count() / threads_count[i] << '\n';
         }
 
-        std::cout << std::fixed << std::setprecision(3) << seconds(diff).count() << "sec\n";
+        std::cout << std::fixed << std::setprecision(3) << seconds(diff).count() << " sec\n\n";
     }
 }
