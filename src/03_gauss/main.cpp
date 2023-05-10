@@ -6,7 +6,7 @@
 #include <random>
 #include <iomanip>
 
-#define MTRX_DIMENSIONS 16
+#define MTRX_DIMENSIONS 1000
 #define PRNG_MIN 1.0
 #define PRNG_MAX 9.0
 
@@ -58,8 +58,8 @@ std::vector<double> init_vector(PRNG &generator, double size) {
 
 //------------------- gauss ---------------------
 std::vector<double> gaussian_elimination(const std::vector<std::vector<double>>& matrix, const std::vector<double>& b, int num_threads) {
-    //const size_t n = matrix.size();
-    int n = num_threads;
+    const size_t n = matrix.size();
+    int nt = num_threads;
 
     // Build augmented matrix
     std::vector<std::vector<double>> augmented_matrix(n, std::vector<double>(n + 1));
@@ -69,15 +69,15 @@ std::vector<double> gaussian_elimination(const std::vector<std::vector<double>>&
     }
 
     // Gaussian elimination
-    for (size_t k = 0; k < n; ++k) {
+    for (size_t k = 0; k < nt; ++k) {
         const double pivot = augmented_matrix[k][k];
         std::vector<std::thread> threads;
 
-        for (size_t i = k + 1; i < n; ++i) {
+        for (size_t i = k + 1; i < nt; ++i) {
             const double factor = augmented_matrix[i][k] / pivot;
 
             threads.emplace_back([&, factor, i]() {
-                for (size_t j = k; j <= n; ++j) {
+                for (size_t j = k; j <= nt; ++j) {
                     augmented_matrix[i][j] -= factor * augmented_matrix[k][j];
                 }
             });
