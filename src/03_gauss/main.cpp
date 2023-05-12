@@ -14,6 +14,7 @@ using namespace std;
 using seconds = chrono::duration<double>;
 using milliseconds = chrono::duration<double, ratio_multiply<seconds::period, milli>>;
 using microseconds = chrono::duration<double, ratio_multiply<seconds::period, micro>>;
+using matrix = vector<vector<double>>;
 
 //-------------------- random --------------------
 typedef struct {
@@ -96,6 +97,29 @@ std::vector<double> gaussian_elimination(const std::vector<std::vector<double>>&
     }
 
     return x;
+}
+
+//-------------------- thread exec ------------------
+void thread_exec(matrix &augmented_matrix; int range_min, int range_max, int iter) {
+    double augmented_matrix_iter = augmented_matrix[iter][iter];
+    for (size_t i = range_min; i < range_max; ++i) {
+        if (augmented_matrix_iter * augmented_matrix[i][iter] < 0) {
+            // for elems with different sign
+            for (size_t j = 0; j < MTRX_DIMENSIONS; ++j) {
+                if (augmented_matrix_iter < 0) {
+                    augmented_matrix[i][j] += augmented_matrix[iter][j] / (-augmented_martix_iter) * augmented_matrix[i][iter];
+                } else {
+                    augmented_matrix[i][j] += augmented_matrix[iter][j] / augmented_matrix_iter * augmented_matrix[i];
+                }
+            }
+        } else {
+            //for elems with one sign
+            for (size_t j = 0; j < MTRX_DIMENSIONS; ++j) {
+                augmented_matrix[i][j] += augmented_matrix[iter][j] / augmented_matrix_iter * (-augmented_matrix[i][iter]);
+            }
+        }
+    }
+
 }
 
 //-------------------- naive gauss ------------------
