@@ -6,7 +6,7 @@
 #include <random>
 #include <iomanip>
 
-#define MTRX_DIMENSIONS 1000
+#define MTRX_DIMENSIONS 1500
 #define PRNG_MIN 1.0
 #define PRNG_MAX 9.0
 
@@ -57,6 +57,20 @@ std::vector<double> init_vector(PRNG &generator, double size) {
     return my_vector;
 }
 
+//------------------ augmented -----------------
+std::vector<std::vector<double>> get_augmented_matrix(const std::vector<std::vector<double>> &matrix, const std::vector<double> &b) {
+    int n = matrix.size();
+
+    std::vector<std::vector<double>> augmented_matrix(n);
+    for (int i = 0; i < n; ++i) {
+        augmented_matrix[i].resize(n+1);
+        std::copy(matrix[i].begin(), matrix[i].end(), augmented_matrix[i].begin());
+        augmented_matrix[i][n] = b[i];
+    }
+
+    return augmented_matrix;
+}
+
 //------------------- gauss ---------------------
 std::vector<double> gaussian_elimination(const std::vector<std::vector<double>>& matrix, const std::vector<double>& b, int num_threads) {
     const size_t n = matrix.size();
@@ -100,16 +114,17 @@ std::vector<double> gaussian_elimination(const std::vector<std::vector<double>>&
 }
 
 //-------------------- thread exec ------------------
-void thread_exec(matrix &augmented_matrix; int range_min, int range_max, int iter) {
+void thread_exec(matrix &augmented_matrix, int range_min, int range_max, int iter) {
     double augmented_matrix_iter = augmented_matrix[iter][iter];
+
     for (size_t i = range_min; i < range_max; ++i) {
         if (augmented_matrix_iter * augmented_matrix[i][iter] < 0) {
             // for elems with different sign
             for (size_t j = 0; j < MTRX_DIMENSIONS; ++j) {
                 if (augmented_matrix_iter < 0) {
-                    augmented_matrix[i][j] += augmented_matrix[iter][j] / (-augmented_martix_iter) * augmented_matrix[i][iter];
+                    augmented_matrix[i][j] += augmented_matrix[iter][j] / (-augmented_matrix_iter) * augmented_matrix[i][iter];
                 } else {
-                    augmented_matrix[i][j] += augmented_matrix[iter][j] / augmented_matrix_iter * augmented_matrix[i];
+                    augmented_matrix[i][j] += augmented_matrix[iter][j] / augmented_matrix_iter * augmented_matrix[i][iter];
                 }
             }
         } else {
@@ -119,19 +134,11 @@ void thread_exec(matrix &augmented_matrix; int range_min, int range_max, int ite
             }
         }
     }
-
 }
 
 //-------------------- naive gauss ------------------
-std::vector<double> naive_gaussian_elimination(const std::vector<std::vector<double>>& matrix, const std::vector<double>& b) {
+std::vector<double> naive_gaussian_elimination(const std::vector<std::vector<double>> &matrix, std::vector<std::vector<double>> &augmented_matrix) {
     int n = matrix.size();
-
-    std::vector<std::vector<double>> augmented_matrix(n);
-    for (int i = 0; i < n; ++i) {
-        augmented_matrix[i].resize(n+1);
-        std::copy(matrix[i].begin(), matrix[i].end(), augmented_matrix[i].begin());
-        augmented_matrix[i][n] = b[i];
-    }
 
     for (int k = 0; k < n; ++k) {
         double pivot = augmented_matrix[k][k];
@@ -168,11 +175,12 @@ int main() {
 
     std::vector<std::vector<double>> matrix = init_matrix(generator, MTRX_DIMENSIONS);
     std::vector<double> b_vector = init_vector(generator, MTRX_DIMENSIONS);
+    std::vector<std::vector<double>> augm_matrix = get_augmented_matrix(matrix, b_vector);
 
     auto timed1 = chrono::steady_clock::now();
     auto timed2 = chrono::steady_clock::now();
 
-    auto timed = timed2 - timed1;
+    auto time_one_thread = timed2 - timed1;
 
     int threads_count[] = {1, 4, 8, 16};
 
@@ -183,7 +191,7 @@ int main() {
         const auto time_start = chrono::steady_clock::now();
         
         if (i == 0) {
-            naive_gaussian_elimination(matrix, b_vector);
+            naive_gaussian_elimination(matrix, augm_matrix);
         } else {
             gaussian_elimination(matrix, b_vector, threads_count[i]);
         }
@@ -191,10 +199,10 @@ int main() {
         const auto time_finish = chrono::steady_clock::now();
         const auto diff = time_finish - time_start;
 
-        if (i == 0) timed = diff;
+        if (i == 0) time_one_thread = diff;
         else {
-            cout << "speed up: " << seconds(timed).count() / seconds(diff).count() << '\n';
-            cout << "effectiveness: " << seconds(timed).count() / seconds(diff).count() / threads_count[i] << '\n';
+            cout << "speed up: " << seconds(time_one_thread).count() / seconds(diff).count() << '\n';
+            cout << "effectiveness: " << seconds(time_one_thread).count() / seconds(diff).count() / threads_count[i] << '\n';
         }
 
         std::cout << fixed << std::setprecision(3) << std::setw(12) << seconds(diff).count()
