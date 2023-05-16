@@ -165,9 +165,6 @@ int main() {
         }
 
         std::cout << "----------------------------------------\n";
-
-        // std::cout << std::fixed << std::setprecision(3)
-        //          << "Exec time:\t\t" << seconds(diff).count() << " seconds\n\n";
     }
     return 0;
 }
